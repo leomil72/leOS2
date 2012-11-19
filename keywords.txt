@@ -1,0 +1,28 @@
+#######################################
+# Syntax Coloring Map For leOS2
+####################################### 
+# Datatypes (KEYWORD1)
+#######################################
+
+leOS2	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+addTask	KEYWORD2
+convertMs	KEYWORD2
+getTaskStatus	KEYWORD2
+modifyTas	KEYWORD2
+pauseTask	KEYWORD2
+removeTask	KEYWORD2
+reset	KEYWORD2
+restartTask	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+PAUSED	LITERAL1
+SCHEDULED	LITERAL1
+ONETIME	LITERAL1

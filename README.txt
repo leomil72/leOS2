@@ -1,0 +1,208 @@
+******** leOS2.h - <l>ittle <e>mbedded <O>perating <S>ystem 2 *******
+
+leOS2 (little embedded Operating System 2)
+
+leOS2 is a simple scheduler to execute little routines in background,
+at specific intervals. leOS2 comes from leOS but instead of using an
+internal timer like the latter, it is based on the WatchDog Timer, a
+separated counter that is attached to an internal oscillator clocked at 
+128 kHz.
+    
+For more infos, please read the README.txt file.
+
+The latest version of this library can be found at:
+http://www.leonardomiliani.com/?p=516&lang=en
+
+Written by Leonardo Miliani <www.leonardomiliani.com>
+
+More infos can be found in the PDF user's guide.
+
+***********************
+Version history
+
+v. 2.0.91: code cleaning
+v. 2.0.90: a timeout can be specified for MCU reset during initialization
+v. 2.0.2:  removed support for Atmega8/A
+v. 2.0.1:  first release
+
+
+***********************
+How to use it - Methods
+
+Unpack the library and copy it into your /libraries folder, that usually is in
+your sketchs' folder. Then include the library and create a new istance of it
+by adding the following code at the top of your sketch:
+
+#include "leOS2.h"
+leOS2 myOS
+
+Then you have to initialize the library in the setup() routine:
+void setup() {
+  myOS.begin([timeoutInTicks]);
+  .....
+}
+
+timeoutInTicks is optional. If set to 0, leOS2 will work as usual. If a values
+of ticks is specified (maybe also using the new method convertMs() if you want to
+pass milliseconds instead of ticks - see below) the scheduler will execute
+the tasks as usual. But, when a task will freeze, i.e. for a neverending loop, 
+the ISR will start to count: when it will reach the timeout, a reset will
+be executed. This is done using the "interrupt & system reset" mode of the 
+WDT: every time that the timer will expire, the WDT will raise an interrupt first, 
+and, if inside the ISR the flag WDIE won't be set again, the next time that 
+the timer will expire, a system reset will be performed.
+
+Now you can add a task by simply call the method .addTask():
+void setup() {
+  ...
+  myOS.addTask(yourFunction, scheduleTime[, status]);
+  ...
+}
+
+yourFunction must be a routine that is inside your sketch. scheduleTime is
+the interval between 2 executions of the task, in "ticks". A tick is a
+particular measurement of the time that is 16 ms long. So the minimum 
+interval that is available is 16 ms and the interval must always be a
+multiply of 16 ms.
+128,000 kHz / 2,048 = 62.5 Hz
+1/62.5 = 0.016 s -> 16 ms
+To set an interval near 1 second, you have to specify a schedule time of 
+~62 ticks (1000/16=62.5 -> 62). To help converting between ms and ticks 
+you can use the method convertMs():
+
+myOS.addTask(yourFunction, myOS.convertMs(schedule_time_in_ms)[, status]);
+
+
+The user can choose the status of the task when it adds it to the scheduler. 
+status can be: 
+PAUSED, for a task that doesn't have to start immediately;
+SCHEDULED (default option), for a normal task that has to start after its 
+scheduling; 
+ONETINE, for a task that has to run only once.
+
+An interesting feature is the ability to run one-time tasks. A one-time task
+is a task that will be run only once: the scheduler, once it has run the task,
+will remove it from the running tasks (it won't be paused, it will be permanently
+deleted).
+
+
+To pause a task, just call the following method:
+myOS.pauseTask(yourFunction);
+
+You can restart it with:
+myOS.restartTask(yourFunction);
+
+To remove a task from the scheduler call this method:
+myOS.removeTask(yourFunction);
+
+To modify a running task, simply call the modifyTask method with the new interval
+(in ticks) and/or the status of the task, i.e. a normal or a one-time task:
+myOS.modifyTask(yourFunction, newInterval [, newTaskStatus]);
+
+newTaskStatus can be ONETIME if you decide to transform a normal task into a
+one-time task, or SCHEDULED if you want to transform a one-time task into
+a normal task (the one-time has still to be executed).
+
+
+To check if a task is running, you have to use the taskIsRunning() method:
+myOS.getTaskStatus(yourFunction);
+
+This will return 255 if there was an error (task not found) or a value for the
+current status: 
+PAUSED (or 0) - task is paused/not running
+SCHEDULED (or 1) - task is running 
+ONETIME (or 2) - task is scheduled to run in a near future.
+
+The WatchDog is also used to reset the microcontroller by software. If you need
+to do that, call the method reset() at any time and from any place of your
+sketch instead of using the usual codes based on WatchDog:
+myOS.reset();
+
+
+**BE CAREFUL**
+the user is asked to check his code to avoid strange situations when 
+he pauses a task. I.e.: if the task that has been paused alternated the output of 
+a pin and that pin drove an external circuit, the user should check if the status 
+of the pin after the task has been paused is safe and compatible with his needs.
+
+
+***********************
+32-/64-bits math
+
+Starting with version 0.1.1, the user can choose between 32-bits and 64-bits math.
+Using 32-bits math, the maximum interval that can be choosed is limited to 49.7 days;
+the overflow of the counter has been fixed since version 1.0.1.
+
+While using 64-bits math the maximum that can be choosen is only limited by the
+user's fantasy, due to the fact that the 64-bits counter will overflow after 
+584,942,417 years (default maximum interval is 1 hour, but you can change this
+value editing the leOS2::addTask method inside the leOS2.cpp file).
+
+To switch between 32-bits and 64-bits math just comment/uncomment the line
+#define SIXTYFOUR_MATH
+
+that is present at the beginning of the code inside the leOS2.h file.
+
+
+***********************
+How it works
+
+The scheduler makes use of a special counter that is used by the WatchDog
+circuit. The WatchDog is a circuit that can raises an interrupt or a
+system reset after a specific time. Usually the WatchDog is used to
+reset the microcontroller: this is useful if, for example the code
+freezes during a particular task, i.e. during datas that should had to
+come over an ethernet connection. If the timer expires, the WatchDog will
+reset the microcontroller. This timer is incremented using the 128 kHz
+internal oscillator: the clock is divided by a prescaler circuit set to
+factor 2,048 so that the minimum interval is:
+128,000/2,048=62.5 Hz
+1/62.5 = 0.016s -> 16 ms
+
+Starting with version 2.0.90 leOS2 can be initialized to set the WDT in
+"interrupt and system reset" mode. In this modality, WDT first raises an 
+interrupt and then, at the next timeout, it resets the microcontroller. 
+The sequence can be halted by setting to “1” the bit flag WDIE just after 
+the interrupt has been raised so that the next timeout the WDT will raise 
+an interrupt again. This is done inside the scheduler. The user can pass 
+to leOS2 a timeout value during the initialization of the scheduler: leOS2 
+will use that value to monitor if a task has freezed during its execution. 
+Every time that the scheduler is called, it checks if a task is running: 
+if yes, a counter, that has been initiliazed with the timeout value set 
+by the user, is decremented. If its value if greater than zero, the WDIE 
+bit is set to “1”; when it reaches zero, the scheduler does set the WDIE 
+bit to “0”. This is intercepted by WDT the next time that its timer will 
+expire: if the WDT sees that the WDIE bit is at “0”, it will reset the 
+microcontroller.
+
+Remember that the usage of leOS2 will interfere with any code or library that
+uses the WatchDog.
+
+
+***********************
+Supported microcontrollers
+
+leOS2 can work on almost every Atmel microcontroller that is supported
+by the GNU gcc Avr compiler and the Arduino IDE (through specific cores).
+At the moment, the only MCU supported by the Arduino IDE but NOT supported
+by leOS2 is the Atmega8/A due to the fact that the WDT of this chip isn't
+able to generate an interrupt signal but it can only raise a reset signal.
+
+
+***********************
+Licence
+
+This library is free software; you can redistribute it and/or modify it under 
+the terms of the GNU General Public	License as published by the Free Software 
+Foundation; either version 3.0 of the License, or (at your option) any later 
+version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+
+
+***********************
+Document revision
+
+4th revision: 2012/11/15
