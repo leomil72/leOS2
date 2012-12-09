@@ -192,7 +192,7 @@ uint8_t leOS2::getTaskStatus(void (*userTask)(void)) {
 		return -1;
 	}
     
-    uint8_t tempJ = 255;
+    uint8_t tempJ = 255; //return 255 if the task was not found (almost impossible)
     SREG &= ~(1<<SREG_I); //halt the scheduler
 	uint8_t tempI = 0;
     //look for the task
@@ -205,7 +205,7 @@ uint8_t leOS2::getTaskStatus(void (*userTask)(void)) {
         tempI++;
     } while (tempI < _numTasks);
     SREG |= (1<<SREG_I); //restart the scheduler
-    return tempJ; //return 255 if the task was not found (almost impossible) or its current status
+    return tempJ; //return the task status
 }
 
 
@@ -214,10 +214,11 @@ uint32_t leOS2::convertMs(uint32_t tempMs) {
     if (tempMs < 16) {
         return 1;
     }
-    if ((tempMs >> 4) > MAX_TASK_INTERVAL) {
+	tempMs = tempMs >> 4;
+    if (tempMs > MAX_TASK_INTERVAL) {
         return MAX_TASK_INTERVAL;
     } else {
-        return (tempMs >> 4);
+        return tempMs;
     }
 }
 
@@ -241,13 +242,13 @@ void leOS2::reset(void) {
 //so other ISRs can interrupt it
 ISR(WDT_vect, ISR_NOBLOCK) {
 
-	_ticksCounter++; //increment the ms counter
+	_ticksCounter++; //increment the ticks counter
 	
 	//check if the next timeout of the WDT an interrupt should be
     //called or a reset should be executed
 
     //check if a task is already running
-	if (_wdtResetTimeout) {
+	if (_wdtResetTimeout > 0) {
 	    if (_taskIsRunning) {
 	        //check if the maximum # of timeouts has been reached
 			_maxTimeouts--;
@@ -269,7 +270,7 @@ ISR(WDT_vect, ISR_NOBLOCK) {
 #ifdef SIXTYFOUR_MATH
 			if (_ticksCounter > tasks[tempI].plannedTask) { 
 #else
-            if ((long)(_ticksCounter - tasks[tempI].plannedTask) >=0) { //this trick overrun the overflow of _ticksCounter
+            if ((long)(_ticksCounter - tasks[tempI].plannedTask) >=0) { //this trick overruns the overflow of _ticksCounter
 #endif
                 //prepare the counters to monitor if a task will freeze
 				_maxTimeouts = _wdtResetTimeout;

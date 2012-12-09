@@ -35,7 +35,7 @@
 #define leOS2_VERSION 2091
 
 
-//Library is compatible both with Arduino <=0023 and Arduino >=100
+//this library is compatible both with Arduino <=0023 and Arduino >=100
 #if defined(ARDUINO) && (ARDUINO >= 100)
 #include "Arduino.h"
 #else
@@ -48,7 +48,7 @@
 //#define SIXTYFOUR_MATH
 
 
-//check MCU compatibility - Atmega8 won't work
+//check MCU compatibility - with Atmega8 leOS2 won't work
 #if defined (__AVR_ATmega8__) || defined (__AVR_ATmega8A__)
 #error Sorry, this MCU is not supported (lack of interrupt vector for WDT)!
 #endif
