@@ -14,6 +14,9 @@ And so on. But if the scheduler encountes a task that freezes the MCU, a counter
 internal at the ISR will be decremented. When it will reach 0, the reset 
 won't be set anymore and the WDT will reset the microcontroller.
 
+To test the example, set up a circuit with 3 LEDs (and the corresponding resistors)
+and connect them to pins D7, D8, and D9.
+
 More info on the scheduler and the methods can be found into the README file.
 
 Written by Leonardo Miliani <www.leonardomiliani.com>
@@ -36,16 +39,18 @@ leOS2 myOS; //create a new istance
 const byte LED = 7;
 byte LEDstatus = 0;
 const byte LED2 = 8;
+const byte LED3 = 9;
 
 //setup routine
 void setup() {
     //initialize the scheduler
-    //myOS.begin(0); //without a timeout, the MCU can be freezed by a neverending task
+    //myOS.begin(); //without a timeout, the MCU can be freezed by a neverending task
     myOS.begin(myOS.convertMs(2000)); //with a timeout, the WDT will reset the micro if a task will freeze the CPU
     
     //pins as output
     pinMode(LED, OUTPUT);
     pinMode(LED2, OUTPUT);
+    pinMode(LED3, OUTPUT);
     //add the tasks
     myOS.addTask(flashLed, myOS.convertMs(500));
     myOS.addTask(freeze, myOS.convertMs(5000));
@@ -54,7 +59,12 @@ void setup() {
 
 
 //main loop - it's empty
-void loop() {}
+void loop() {
+    digitalWrite(LED3, HIGH);
+    delay(150);
+    digitalWrite(LED3, LOW);
+    delay(150);
+}
 
 
 //hello world

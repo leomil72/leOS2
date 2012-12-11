@@ -20,6 +20,7 @@ More infos can be found in the PDF user's guide.
 ***********************
 Version history
 
+v. 2.1.0:  stable release - fixed a bug on the managemenet of the freezing tasks
 v. 2.0.91: code cleaning
 v. 2.0.90: a timeout can be specified for MCU reset during initialization
 v. 2.0.2:  removed support for Atmega8/A
@@ -205,4 +206,4 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ***********************
 Document revision
 
-4th revision: 2012/11/15
+6th revision: 2012/12/10

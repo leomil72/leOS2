@@ -32,7 +32,7 @@
 
 
 //library version
-#define leOS2_VERSION 2091
+#define leOS2_VERSION 210
 
 
 //this library is compatible both with Arduino <=0023 and Arduino >=100
@@ -45,6 +45,7 @@
 
 //uncomment this line if you want to use 64-bit math (more Flash consumption) - default is 32-bits math
 //(read the README.txt file for more details about the difference between 32- & 64-bits math)
+
 //#define SIXTYFOUR_MATH
 
 
@@ -66,7 +67,6 @@ class leOS2 {
 		//public methods
 		leOS2();
         void begin(uint16_t resetTimeout = 0);
-        //void (*voidFuncPtr)(void);
 		uint8_t addTask(void (*)(void), unsigned long, uint8_t taskStatus = SCHEDULED);
 		uint8_t removeTask(void (*)(void));
 		uint8_t pauseTask(void (*)(void));

@@ -246,22 +246,20 @@ ISR(WDT_vect, ISR_NOBLOCK) {
 	
 	//check if the next timeout of the WDT an interrupt should be
     //called or a reset should be executed
-
-    //check if a task is already running
-	if (_wdtResetTimeout > 0) {
-	    if (_taskIsRunning) {
-	        //check if the maximum # of timeouts has been reached
-			_maxTimeouts--;
-			if (_maxTimeouts == 0) {
-	            //max numb. of timeouts reached - next time we need a chip reset!
-				_WD_CONTROL_REG &= ~(1<<WDIE);
-			}
-			return;
-		}
-		_WD_CONTROL_REG |= (1<<WDIE); //another interrupt, please...
-	}
-
-
+    if (_wdtResetTimeout ) {
+        _WD_CONTROL_REG |= (1<<WDIE); //another interrupt, please...
+        //check if a task is already running
+        if (_taskIsRunning) {
+            //check if the maximum # of timeouts has been reached
+            _maxTimeouts--;
+            if (_maxTimeouts == 0) {
+                //max numb. of timeouts reached - next time we need a chip reset!
+                _WD_CONTROL_REG &= ~(1<<WDIE);
+            }
+            return;
+        }
+    }
+    
     //THIS IS THE SCHEDULER!	
 	uint8_t tempI = 0;	
 	do {
