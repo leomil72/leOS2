@@ -15,11 +15,12 @@ http://www.leonardomiliani.com/?p=516&lang=en
 
 Written by Leonardo Miliani <www.leonardomiliani.com>
 
-More infos can be found in the PDF user's guide.
+More infos can be found in the attached user's guide (PDF).
 
 ***********************
 Version history
 
+v. 2.1.1:  now a task can start as soon as it has been added to the scheduler
 v. 2.1.0:  stable release - fixed a bug on the managemenet of the freezing tasks
 v. 2.0.91: code cleaning
 v. 2.0.90: a timeout can be specified for MCU reset during initialization
@@ -71,7 +72,7 @@ To set an interval near 1 second, you have to specify a schedule time of
 ~62 ticks (1000/16=62.5 -> 62). To help converting between ms and ticks 
 you can use the method convertMs():
 
-myOS.addTask(yourFunction, myOS.convertMs(schedule_time_in_ms)[, status]);
+myOS.addTask(yourFunction, myOS.convertMs(schedule_time_in_ms)[, status][, start]);
 
 
 The user can choose the status of the task when it adds it to the scheduler. 
@@ -80,6 +81,8 @@ PAUSED, for a task that doesn't have to start immediately;
 SCHEDULED (default option), for a normal task that has to start after its 
 scheduling; 
 ONETINE, for a task that has to run only once.
+SCHEDULED_IMMEDIATESTART, for a task that has to be executed once it has
+been added to the scheduler.
 
 An interesting feature is the ability to run one-time tasks. A one-time task
 is a task that will be run only once: the scheduler, once it has run the task,
@@ -191,6 +194,17 @@ able to generate an interrupt signal but it can only raise a reset signal.
 
 
 ***********************
+WARNING - IMPORTANT ADVICE FOR ARDUINO MEGA/MEGA2560 OWNERS:
+the original bootloader flashed into the Arduino MEGA and MEGA2560 boards 
+doesn’t deactivate the watchdog at the microcontroller’s startup so the 
+board will freeze itself in a neverending loop caused by eternal resets. 
+To solve this problem, users that want to use leOS2 have to change the 
+bootloader with one that it isn’t affected by this issue. The bootloader 
+can be downloaded by this page:
+https://github.com/arduino/Arduino-stk500v2-bootloader/tree/master/goodHexFiles
+
+
+***********************
 Licence
 
 This library is free software; you can redistribute it and/or modify it under 
@@ -206,4 +220,4 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ***********************
 Document revision
 
-6th revision: 2012/12/10
+8th revision: 2013/01/14

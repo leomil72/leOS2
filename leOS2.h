@@ -32,7 +32,7 @@
 
 
 //library version
-#define leOS2_VERSION 210
+#define leOS2_VERSION 211
 
 
 //this library is compatible both with Arduino <=0023 and Arduino >=100
@@ -49,7 +49,7 @@
 //#define SIXTYFOUR_MATH
 
 
-//check MCU compatibility - with Atmega8 leOS2 won't work
+//check MCU compatibility - leOS2 won't work on Atmega8 
 #if defined (__AVR_ATmega8__) || defined (__AVR_ATmega8A__)
 #error Sorry, this MCU is not supported (lack of interrupt vector for WDT)!
 #endif
@@ -57,8 +57,10 @@
 
 //constants
 const uint8_t PAUSED = 0;
-const uint8_t SCHEDULED = 1;
+const uint8_t SCHEDULED = 1; //0b00000001
+const uint8_t SCHEDULED_IMMEDIATESTART = 5; //0b00000101
 const uint8_t ONETIME = 2;
+
 
 
 //leOS2 class
