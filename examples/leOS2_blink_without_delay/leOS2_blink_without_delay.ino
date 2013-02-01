@@ -28,7 +28,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 leOS2 myOS; //create a new istance
 
 //variables to manage the LED
-const byte LED = 13;
+const byte LED13 = 13;
 byte LEDstatus = 0;
 
 
@@ -36,7 +36,7 @@ byte LEDstatus = 0;
 void setup() {
     myOS.begin(); //initialize the scheduler
     //pins as output
-    pinMode(LED, OUTPUT);
+    pinMode(LED13, OUTPUT);
     //add the tasks
     myOS.addTask(flashLed, myOS.convertMs(1000));
 }
@@ -49,7 +49,7 @@ void loop() {}
 //this task will flash the LED on pin D13
 void flashLed() {
     LEDstatus ^= 1;
-    digitalWrite(LED, LEDstatus);
+    digitalWrite(LED13, LEDstatus);
 }
 
 
