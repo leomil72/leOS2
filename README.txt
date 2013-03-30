@@ -123,6 +123,18 @@ sketch instead of using the usual codes based on WatchDog:
 myOS.reset();
 
 
+Introduced with leOS2 2.2.0 there are 2 new methods that permit to stop/restart
+the scheduler, useful if you need to stop all the running tasks at the 
+same time:
+
+myOS.haltScheduler();
+stops the scheduler and freezes all the tasks preserving their current
+intervals;
+
+myOS.restartScheduler();
+restarts the scheduler resuming all the tasks that were running.
+
+
 **BE CAREFUL**
 the user is asked to check his code to avoid strange situations when 
 he pauses a task. I.e.: if the task that has been paused alternated the output of 
@@ -220,4 +232,4 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ***********************
 Document revision
 
-8th revision: 2013/01/14
+9th revision: 2013/03/30

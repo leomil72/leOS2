@@ -32,7 +32,7 @@
 
 
 //library version
-#define leOS2_VERSION 211
+#define leOS2_VERSION 220
 
 
 //this library is compatible both with Arduino <=0023 and Arduino >=100
@@ -59,6 +59,7 @@
 const uint8_t PAUSED = 0;
 const uint8_t SCHEDULED = 1; //0b00000001
 const uint8_t SCHEDULED_IMMEDIATESTART = 5; //0b00000101
+const uint8_t IMMEDIATESTART = SCHEDULED_IMMEDIATESTART; //alias for previous
 const uint8_t ONETIME = 2;
 
 
@@ -76,6 +77,8 @@ class leOS2 {
 		uint8_t modifyTask(void (*)(void), unsigned long, uint8_t oneTimeTask = NULL);
 		uint8_t getTaskStatus(void (*)(void));
         uint32_t convertMs(uint32_t);
+        void haltScheduler(void);
+		void restartScheduler(void);
         void reset(void);
 	private:
         //private methods
