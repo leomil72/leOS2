@@ -81,8 +81,8 @@ PAUSED, for a task that doesn't have to start immediately;
 SCHEDULED (default option), for a normal task that has to start after its 
 scheduling; 
 ONETINE, for a task that has to run only once.
-SCHEDULED_IMMEDIATESTART, for a task that has to be executed once it has
-been added to the scheduler.
+SCHEDULED_IMMEDIATESTART or simply IMMEDIATESTART, for a task that has to
+be executed once it has been added to the scheduler.
 
 An interesting feature is the ability to run one-time tasks. A one-time task
 is a task that will be run only once: the scheduler, once it has run the task,
