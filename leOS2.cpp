@@ -230,14 +230,11 @@ void leOS2::pauseScheduler() {
     wdt_disable();
 }
 
-// Restart the scheduler.
+ // Restart the scheduler.
 void leOS2::restartScheduler() {
-    if(!_initialized)
-    {
+    if(!_initialized) {
         begin();
-    }
-    else
-    {
+    } else {
         setWDT();
     }
 }
