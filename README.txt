@@ -81,8 +81,8 @@ PAUSED, for a task that doesn't have to start immediately;
 SCHEDULED (default option), for a normal task that has to start after its 
 scheduling; 
 ONETINE, for a task that has to run only once.
-SCHEDULED_IMMEDIATESTART, for a task that has to be executed once it has
-been added to the scheduler.
+SCHEDULED_IMMEDIATESTART or simply IMMEDIATESTART, for a task that has to
+be executed once it has been added to the scheduler.
 
 An interesting feature is the ability to run one-time tasks. A one-time task
 is a task that will be run only once: the scheduler, once it has run the task,
@@ -121,6 +121,18 @@ The WatchDog is also used to reset the microcontroller by software. If you need
 to do that, call the method reset() at any time and from any place of your
 sketch instead of using the usual codes based on WatchDog:
 myOS.reset();
+
+
+Introduced with leOS2 2.2.0 there are 2 new methods that permit to stop/restart
+the scheduler, useful if you need to stop all the running tasks at the 
+same time:
+
+myOS.haltScheduler();
+stops the scheduler and freezes all the tasks preserving their current
+intervals;
+
+myOS.restartScheduler();
+restarts the scheduler resuming all the tasks that were running.
 
 
 **BE CAREFUL**
@@ -220,4 +232,4 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ***********************
 Document revision
 
-8th revision: 2013/01/14
+9th revision: 2013/03/30

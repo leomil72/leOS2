@@ -353,3 +353,18 @@ void leOS2::setWDT() {
     SREG |= (1<<SREG_I); //re-enable interrupts
 }
 
+
+//halt the scheduler
+void leOS2::haltScheduler() {
+    SREG &= ~(1<<SREG_I); //disable all the interrupts    
+    wdt_disable(); //disable WD 
+    SREG |= (1<<SREG_I); //re-enable interrupts
+}
+
+
+//restart the scheduler
+void leOS2::restartScheduler() {
+	if (_initialized) {
+		setWDT();
+	}
+}
