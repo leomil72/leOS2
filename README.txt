@@ -20,6 +20,7 @@ More infos can be found in the attached user's guide (PDF).
 ***********************
 Version history
 
+v. 2.2.0:  new methods to stop/restart the scheduler
 v. 2.1.1:  now a task can start as soon as it has been added to the scheduler
 v. 2.1.0:  stable release - fixed a bug on the managemenet of the freezing tasks
 v. 2.0.91: code cleaning
