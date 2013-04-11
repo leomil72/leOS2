@@ -58,14 +58,14 @@ void leOS2::begin(uint16_t resetTimeout) {
 //add a task to the scheduler
 uint8_t leOS2::addTask(void (*userTask)(void), unsigned long taskInterval, uint8_t taskStatus) {
 	if ((_initialized == 0) || (_numTasks == MAX_TASKS)) { //max number of allowed tasks reached
-		return 1; 
+		return 1;
 	}
 
-	if ((taskInterval < 1) || (taskInterval > MAX_TASK_INTERVAL)) { 
+	if ((taskInterval < 1) || (taskInterval > MAX_TASK_INTERVAL)) {
 		taskInterval = 1; //1 tick/16 ms by default
 	}
     //check if taskStatus is valid
-    if (taskStatus > SCHEDULED_IMMEDIATESTART) { 
+    if (taskStatus > SCHEDULED_IMMEDIATESTART) {
         taskStatus = SCHEDULED;
     }
     //add the task to the scheduler
@@ -85,8 +85,8 @@ uint8_t leOS2::addTask(void (*userTask)(void), unsigned long taskInterval, uint8
 //pause a specific task
 uint8_t leOS2::pauseTask(void (*userTask)(void)) {
     return (setTask(userTask, 0));
-}            
-	
+}
+
 
 //restart a specific task
 uint8_t leOS2::restartTask(void (*userTask)(void)) {
@@ -96,35 +96,34 @@ uint8_t leOS2::restartTask(void (*userTask)(void)) {
 
 //modify an existing task
 uint8_t leOS2::modifyTask(void (*userTask)(void), unsigned long taskInterval, uint8_t oneTimeTask) {
-    if ((oneTimeTask < SCHEDULED) && (oneTimeTask > ONETIME)) {
-        oneTimeTask = NULL;
-    }
+	if ((oneTimeTask < SCHEDULED) && (oneTimeTask > ONETIME)) {
+		oneTimeTask = NULL;
+	}
 
-	if ((taskInterval < 1) || (taskInterval > MAX_TASK_INTERVAL)) { 
+	if ((taskInterval < 1) || (taskInterval > MAX_TASK_INTERVAL)) {
 		taskInterval = 1; //1 tick/16 ms by default
 	}
-	
-    //modify the task into the scheduler
-    SREG &= ~(1<<SREG_I); //halt the scheduler
-    uint8_t tempI = 0;
-    uint8_t _done = 1;
+
+	//modify the task into the scheduler
+	SREG &= ~(1<<SREG_I); //halt the scheduler
+	uint8_t tempI = 0;
+	uint8_t _done = 1;
 	do {
 		if (tasks[tempI].taskPointer == *userTask) { //found the task
-            tasks[tempI].userTasksInterval = taskInterval;
-            if (oneTimeTask != NULL) {
-                tasks[tempI].taskIsActive = oneTimeTask;
-            }
-            tasks[tempI].plannedTask = _ticksCounter + taskInterval;
-            _numTasks++;
-            break;
-            _done = 0;
-        }
-        tempI++;
+			tasks[tempI].userTasksInterval = taskInterval;
+			if (oneTimeTask != NULL) {
+				tasks[tempI].taskIsActive = oneTimeTask;
+			}
+			tasks[tempI].plannedTask = _ticksCounter + taskInterval;
+			_numTasks++;
+			_done = 0;
+			break;
+		}
+		tempI++;
     } while (tempI < _numTasks);
     SREG |= (1<<SREG_I); //restart the scheduler
-    
 	return _done;
-	
+
 }
 
 
@@ -133,13 +132,13 @@ uint8_t leOS2::setTask(void (*userTask)(void), uint8_t tempStatus, unsigned long
     if ((_initialized == 0) || (_numTasks == 0)) {
 		return 1;
 	}
-    
+
     SREG &= ~(1<<SREG_I); //halt the scheduler
 	uint8_t tempI = 0;
 	do {
         if (tasks[tempI].taskPointer == *userTask) {
             tasks[tempI].taskIsActive = tempStatus;
-            if (tempStatus == SCHEDULED) { 
+            if (tempStatus == SCHEDULED) {
 				if (taskInterval == NULL) {
 					tasks[_numTasks].plannedTask = _ticksCounter + tasks[tempI].userTasksInterval;
 				} else {
@@ -153,7 +152,7 @@ uint8_t leOS2::setTask(void (*userTask)(void), uint8_t tempStatus, unsigned long
 	} while (tempI < _numTasks);
     SREG |= (1<<SREG_I); //restart the scheduler
     return 0;
-}    
+}
 
 
 //remove a task from the scheduler
@@ -161,12 +160,12 @@ uint8_t leOS2::removeTask(void (*userTask)(void)) {
 	if ((_initialized == 0) || (_numTasks == 0)) {
 		return 1;
 	}
-    
+
     SREG &= ~(1<<SREG_I); //halt the scheduler
 	uint8_t tempI = 0;
 	do {
 		if (tasks[tempI].taskPointer == *userTask) {
-            if ((tempI + 1) == _numTasks) { 
+            if ((tempI + 1) == _numTasks) {
                 _numTasks--;
             } else if (_numTasks > 1) {
                 for (uint8_t tempJ = tempI; tempJ < _numTasks; tempJ++) {
@@ -194,7 +193,7 @@ uint8_t leOS2::getTaskStatus(void (*userTask)(void)) {
 	if ((_initialized == 0) || (_numTasks == 0)) {
 		return -1;
 	}
-    
+
     uint8_t tempJ = 255; //return 255 if the task was not found (almost impossible)
     SREG &= ~(1<<SREG_I); //halt the scheduler
 	uint8_t tempI = 0;
@@ -202,7 +201,7 @@ uint8_t leOS2::getTaskStatus(void (*userTask)(void)) {
 	do {
 		if (tasks[tempI].taskPointer == *userTask) {
             //return its current status
-            tempJ = tasks[tempI].taskIsActive; 
+            tempJ = tasks[tempI].taskIsActive;
             break;
         }
         tempI++;
@@ -246,7 +245,7 @@ void leOS2::reset(void) {
 ISR(WDT_vect, ISR_NOBLOCK) {
 
 	_ticksCounter++; //increment the ticks counter
-	
+
 	//check if the next timeout of the WDT an interrupt should be
     //called or a reset should be executed
     if (_wdtResetTimeout ) {
@@ -262,14 +261,14 @@ ISR(WDT_vect, ISR_NOBLOCK) {
             return;
         }
     }
-    
-    //THIS IS THE SCHEDULER!	
-	uint8_t tempI = 0;	
+
+    //THIS IS THE SCHEDULER!
+	uint8_t tempI = 0;
 	do {
-		if (tasks[tempI].taskIsActive > 0 ) { //the task is running  
+		if (tasks[tempI].taskIsActive > 0 ) { //the task is running
             //check if it's time to execute the task
 #ifdef SIXTYFOUR_MATH
-			if (_ticksCounter > tasks[tempI].plannedTask) { 
+			if (_ticksCounter > tasks[tempI].plannedTask) {
 #else
             if ((long)(_ticksCounter - tasks[tempI].plannedTask) >=0) { //this trick overruns the overflow of _ticksCounter
 #endif
@@ -281,8 +280,8 @@ ISR(WDT_vect, ISR_NOBLOCK) {
 				_taskIsRunning = 0;
 				//_maxTimeouts = 0;
                 //if it's a one-time task, than it has to be removed after running
-                if (tasks[tempI].taskIsActive == ONETIME) { 
-                    if ((tempI + 1) == _numTasks) { 
+                if (tasks[tempI].taskIsActive == ONETIME) {
+                    if ((tempI + 1) == _numTasks) {
                         _numTasks--;
                     } else if (_numTasks > 1) {
                         for (uint8_t tempJ = tempI; tempJ < _numTasks; tempJ++) {
@@ -310,7 +309,7 @@ ISR(WDT_vect, ISR_NOBLOCK) {
 //private methods
 //
 
-/* 
+/*
 ************************************************************
 WARNING!! DO NOT MODIFY THE FOLLOWING CODE IF YOU DON'T KNOW
 WHAT YOU'RE DOING! YOU COULD PUT YOUR MICROCONTROLLER IN A
@@ -321,16 +320,16 @@ NEVERENDING RESET!!
 //set the WatchDog Timer
 void leOS2::setWDT() {
     MCUSR = 0; //ensure that the reset vectors are off
-    wdt_disable(); //disable WD 
+    wdt_disable(); //disable WD
 
-    SREG &= ~(1<<SREG_I); //disable all the interrupts    
+    SREG &= ~(1<<SREG_I); //disable all the interrupts
     //set the WD control register:
     //prescaler to /2048 (16 ms)
     //"interrupt & reset" mode enabled
     byte _tempI = (1<<WDIE);
     if (_wdtResetTimeout) {
         _tempI |= (1<<WDE);
-    } 
+    }
     _WD_CONTROL_REG = ((1<<_WD_CHANGE_BIT) | (1<<WDE));
     _WD_CONTROL_REG = _tempI;
     SREG |= (1<<SREG_I); //re-enable interrupts
@@ -339,8 +338,8 @@ void leOS2::setWDT() {
 
 //halt the scheduler
 void leOS2::haltScheduler() {
-    SREG &= ~(1<<SREG_I); //disable all the interrupts    
-    wdt_disable(); //disable WD 
+    SREG &= ~(1<<SREG_I); //disable all the interrupts
+    wdt_disable(); //disable WD
     SREG |= (1<<SREG_I); //re-enable interrupts
 }
 
