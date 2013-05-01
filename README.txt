@@ -22,6 +22,7 @@ More infos can be found in the attached user's guide (PDF).
 ***********************
 Version history
 
+v. 2.2.2:  little bugs fixed
 v. 2.2.1:  fixed an issue in modifyTask
 v. 2.2.0:  new methods to stop/restart the scheduler
 v. 2.1.1:  now a task can start as soon as it has been added to the scheduler
@@ -236,4 +237,4 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ***********************
 Document revision
 
-9th revision: 2013/03/30
+10th revision: 2013/05/01
