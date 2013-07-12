@@ -227,7 +227,7 @@ uint32_t leOS2::convertMs(uint32_t tempMs) {
 //reset the MCU
 void leOS2::reset(void) {
     wdt_disable();
-    wdt_enable(WDTO_30MS);
+    wdt_enable(WDTO_2S);
     while(1){}; //wait for reset
 }
 
