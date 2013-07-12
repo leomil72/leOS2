@@ -16,7 +16,7 @@
     or
     https://github.com/leomil72
 
-	Current version: 2.2.2 - 2013/05/01
+	Current version: 2.2.3 - 2013/07/12
     (for a complete history of the previous versions, see the README file)
 
   	This library is free software; you can redistribute it and/or
@@ -37,7 +37,7 @@
 
 
 //library version
-#define leOS2_VERSION 222
+#define leOS2_VERSION 223
 
 
 //this library is compatible both with Arduino <=0023 and Arduino >=100
