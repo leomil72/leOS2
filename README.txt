@@ -22,6 +22,7 @@ More infos can be found in the attached user's guide (PDF).
 ***********************
 Version history
 
+v. 2.3.0:  fixed a critical bug that lead to infinite execution of task 0 (also if ONETIME)
 v. 2.2.3:  set the WDT timer to 2s when the watchdog is used to reset the MCU to avoid infinite resets.
 v. 2.2.2:  little bugs fixed
 v. 2.2.1:  fixed an issue in modifyTask
@@ -238,4 +239,4 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ***********************
 Document revision
 
-11th revision: 2013/07/12
+13th revision: 2016/01/10

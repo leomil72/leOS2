@@ -262,8 +262,9 @@ ISR(WDT_vect, ISR_NOBLOCK) {
     }
 
     //THIS IS THE SCHEDULER!
-	uint8_t tempI = 0;
-    while (tempI < _numTasks) {
+	uint8_t tempI = 0; //set the pointer to the tasks to 0
+	void (*savedJobPointer)(void); //create a task pointer
+	while (tempI < _numTasks) {
 		if (tasks[tempI].taskIsActive > 0 ) { //the task is running
             //check if it's time to execute the task
 #ifdef SIXTYFOUR_MATH
@@ -274,13 +275,23 @@ ISR(WDT_vect, ISR_NOBLOCK) {
                 //prepare the counters to monitor if a task will freeze
 				_maxTimeouts = _wdtResetTimeout;
 				_taskIsRunning = 1;
-				tasks[tempI].taskPointer(); //call the task
+				savedJobPointer = tasks[tempI].taskPointer; //store its pointer
+				savedJobPointer(); //call the task
                 //reset the counters
 				_taskIsRunning = 0;
-				//_maxTimeouts = 0;
-                //if it's a one-time task, than it has to be removed after running
-                if (tasks[tempI].taskIsActive == ONETIME) {
-                    if ((tempI + 1) == _numTasks) {
+				
+				if (tasks[tempI].taskIsActive == ONETIME) { 
+					//re-determine the task's position in case it's changed
+					tempI = 0;
+					do {
+						if (tasks[tempI].taskPointer == savedJobPointer) { //found the task
+							break;
+						} else {
+							tempI++;
+						}
+					} while (tempI <= _numTasks);
+					//remove it from the scheduler
+                    if (tempI == _numTasks) { 
                         _numTasks--;
                     } else if (_numTasks > 1) {
                         for (uint8_t tempJ = tempI; tempJ < _numTasks; tempJ++) {
@@ -299,8 +310,8 @@ ISR(WDT_vect, ISR_NOBLOCK) {
                 }
 			}
 		}
-	tempI++;
-	} 
+	    tempI++;
+	}
 }
 
 
