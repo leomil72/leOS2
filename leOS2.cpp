@@ -97,7 +97,7 @@ uint8_t leOS2::restartTask(void (*userTask)(void)) {
 //modify an existing task
 uint8_t leOS2::modifyTask(void (*userTask)(void), unsigned long taskInterval, uint8_t oneTimeTask) {
 	if ((oneTimeTask < SCHEDULED) && (oneTimeTask > ONETIME)) {
-		oneTimeTask = NULL;
+		oneTimeTask = NONE;
 	}
 
 	if ((taskInterval < 1) || (taskInterval > MAX_TASK_INTERVAL)) {
@@ -111,7 +111,7 @@ uint8_t leOS2::modifyTask(void (*userTask)(void), unsigned long taskInterval, ui
 	do {
 		if (tasks[tempI].taskPointer == *userTask) { //found the task
 			tasks[tempI].userTasksInterval = taskInterval;
-			if (oneTimeTask != NULL) {
+			if (oneTimeTask != NONE) {
 				tasks[tempI].taskIsActive = oneTimeTask;
 			}
 			tasks[tempI].plannedTask = _ticksCounter + taskInterval;
@@ -138,7 +138,7 @@ uint8_t leOS2::setTask(void (*userTask)(void), uint8_t tempStatus, unsigned long
         if (tasks[tempI].taskPointer == *userTask) {
             tasks[tempI].taskIsActive = tempStatus;
             if (tempStatus == SCHEDULED) {
-				if (taskInterval == NULL) {
+				if (taskInterval == NONE) {
 					tasks[tempI].plannedTask = _ticksCounter + tasks[tempI].userTasksInterval;
 				} else {
 					tasks[tempI].plannedTask = _ticksCounter + taskInterval;
