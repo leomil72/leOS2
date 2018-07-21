@@ -13,7 +13,7 @@ leOS2	KEYWORD1
 addTask	KEYWORD2
 convertMs	KEYWORD2
 getTaskStatus	KEYWORD2
-modifyTas	KEYWORD2
+modifyTask	KEYWORD2
 pauseTask	KEYWORD2
 removeTask	KEYWORD2
 reset	KEYWORD2
