@@ -22,6 +22,7 @@ More infos can be found in the attached user's guide (PDF).
 ***********************
 Version history
 
+v. 2.3.3:  fixed typo in keywords.txt
 v. 2.3.2:  eliminated usage of NULL to fix gcc compiler warnings
 v. 2.3.1:  added compatibility with Arduino IDE >= 1.6.7
 v. 2.3.0:  fixed a critical bug that lead to infinite execution of task 0 (also if ONETIME)

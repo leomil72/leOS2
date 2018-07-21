@@ -37,7 +37,7 @@
 
 
 //library version
-#define leOS2_VERSION 232
+#define leOS2_VERSION 233
 
 
 //this library is compatible both with Arduino <=0023 and Arduino >=100
